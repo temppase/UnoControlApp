@@ -12,7 +12,7 @@ namespace UnoControl
         public int Interval_count { get; set; } // if uno can provide data in loop
         public int Interval_time { get; set; } // seconds
         public int Offset { get; set; }
-        public bool Direction { get; set; } // 0 start to end, 1 end to start
+        public int Direction { get; set; } // 1 min to max, -1 max to min 0 stop and reset
         public bool isLimit { get; set; } // if uno can provide data
         public DataClass() { }
     }

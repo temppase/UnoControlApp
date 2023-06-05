@@ -17,7 +17,7 @@ namespace UnoControl
         string stringContent = "";
         public RequestClass() { }
 
-        public async Task<string> SendData(int length, int time, int count, int dir, int offset, string state)
+        public async Task<string> SendData(int length, int time, int count, int dir, int offset)
         {
             using (var wb = new HttpClient())
             {
@@ -28,8 +28,7 @@ namespace UnoControl
                     new KeyValuePair<string, string>("time", time.ToString()),
                     new KeyValuePair<string, string>("count", count.ToString()),
                     new KeyValuePair<string, string>("offset", offset.ToString()),
-                    new KeyValuePair<string, string>("direction", dir.ToString()),
-                    new KeyValuePair<string, string>("state", state)
+                    new KeyValuePair<string, string>("direction", dir.ToString())
                 });
 
                 var myHttpClient = new HttpClient();

@@ -16,18 +16,19 @@ namespace UnoControl
             if(MmTb.Text.Length == 0) { ResTb.Text = "Set interval length first (mm)!"; }
             else
             {
+                SetValues();
                 ResTb.Text = r.SendData(d.Interval_length,
                                         d.Interval_time, 
                                         d.Interval_count,
                                         Convert.ToInt32(d.Direction), 
-                                        d.Offset, "start").Result;
+                                        d.Offset).Result;
             }
 
         }
 
         private void StopBtn_Click(object sender, EventArgs e)
         {
-            ResTb.Text = r.SendData(0, 0, 0, 0, 0, "off").Result;
+            ResTb.Text = r.SendData(0, 0, 0, 0, 0).Result;
         }
 
         private void StartLeft_CheckedChanged(object sender, EventArgs e)
@@ -44,12 +45,14 @@ namespace UnoControl
         {
             if(left)
             {
+                d.Direction = 1;
                 d.Offset = SledgeBar.Maximum;
                 SledgeBar.Value = SledgeBar.Maximum;
                 ResTb.Text = $"Left start, state:{StartLeft.TabStop}";
             }
             else
             {
+                d.Direction = -1;
                 d.Offset = SledgeBar.Minimum;
                 SledgeBar.Value = SledgeBar.Minimum;
                 ResTb.Text = $"Right start, state:{StartRight.TabStop}";

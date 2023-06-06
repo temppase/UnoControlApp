@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -21,7 +22,7 @@ namespace UnoControl
         {
             using (var wb = new HttpClient())
             {
-
+                Debug.WriteLine("Inside HttpClient");
                 var formContent = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("legth", length.ToString()),
@@ -32,9 +33,13 @@ namespace UnoControl
                 });
 
                 var myHttpClient = new HttpClient();
-                var response = await myHttpClient.PostAsync(url, formContent);
+                Debug.WriteLine("Client initalized");
+                var response = await myHttpClient.PostAsync(url, formContent); // Test drive did't work (git hub).
+                Debug.WriteLine("Response initalized");
                 stringContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine("Response readed");
             }
+            Debug.WriteLine(stringContent);
             return stringContent;
         }
     }

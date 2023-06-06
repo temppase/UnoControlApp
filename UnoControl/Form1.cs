@@ -23,11 +23,11 @@ namespace UnoControl
             else
             {
                 SetValues();
-                //ResTb.Text = r.SendData(d.Interval_length,
-                //                        d.Interval_time,
-                //                        d.Interval_count,
-                //                        Convert.ToInt32(d.Direction),
-                //                        d.Offset).Result;
+                ResTb.Text = r.SendData(d.Interval_length,
+                                        d.Interval_time,
+                                        d.Interval_count,
+                                        Convert.ToInt32(d.Direction),
+                                        d.Offset).Result;
                 ResTb.Text = DataToString();
                 PPBtn.Enabled = true;
             }

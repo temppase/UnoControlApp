@@ -13,7 +13,7 @@ namespace UnoControl
 {
     public class RequestClass
     {
-        string url = "";
+        string url = "https://raw.githubusercontent.com/temppase/TestDataProvider/main/data.txt";
         string stringContent = "";
         public RequestClass() { }
 

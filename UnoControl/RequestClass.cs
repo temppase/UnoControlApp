@@ -18,8 +18,10 @@ namespace UnoControl
     public class RequestClass
     {
 
-        string url = "192.168.1.177";
-        string stringContent = "";
+        private string url = "192.168.1.177";
+        private string stringContent = "";
+        private Int32 port = 23;
+        private string message = "";
         public RequestClass() { }
 
 
@@ -49,15 +51,12 @@ namespace UnoControl
         }
         public string TcpTest(string mes)
         {
-            string message = "";
             try
             {
                 // Create a TcpClient.
                 // Note, for this client to work you need to have a TcpServer
                 // connected to the same address as specified by the server, port
                 // combination.
-                Int32 port = 23;
-
                 // Prefer a using declaration to ensure the instance is Disposed later.
                 using TcpClient client = new TcpClient(url, port);
 
@@ -82,7 +81,7 @@ namespace UnoControl
 
                 // Read the first batch of the TcpServer response bytes.
                 Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                responseData = Encoding.ASCII.GetString(data, 0, bytes);
                 message += $"Received: {responseData}\n";
 
                 // Explicit close is not necessary since TcpClient.Dispose() will be

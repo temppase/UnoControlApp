@@ -4,43 +4,103 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace UnoControl
 {
     public class RequestClass
     {
-        string url = "https://raw.githubusercontent.com/temppase/TestDataProvider/main/data.txt";
+
+        string url = "192.168.1.177";
         string stringContent = "";
         public RequestClass() { }
 
-        public async Task<string> SendData(int length, int time, int count, int dir, int offset)
+
+        HttpClient client = new HttpClient();
+
+        public string SendTest(int length, int time, int count, int dir, int offset)
         {
-            using (var wb = new HttpClient())
+
+            var formContent = new FormUrlEncodedContent(new[]
             {
-                Debug.WriteLine("Inside HttpClient");
-                var formContent = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("legth", length.ToString()),
+                new KeyValuePair<string, string>("legth", length.ToString()),
                     new KeyValuePair<string, string>("time", time.ToString()),
                     new KeyValuePair<string, string>("count", count.ToString()),
                     new KeyValuePair<string, string>("offset", offset.ToString()),
                     new KeyValuePair<string, string>("direction", dir.ToString())
-                });
-
-                var myHttpClient = new HttpClient();
-                Debug.WriteLine("Client initalized");
-                var response = await myHttpClient.PostAsync(url, formContent); // Test drive did't work (git hub).
-                Debug.WriteLine("Response initalized");
-                stringContent = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine("Response readed");
+            });
+            using (HttpResponseMessage response = client.PostAsync(url, formContent).GetAwaiter().GetResult())
+            {
+                using (HttpContent content = response.Content)
+                {
+                    stringContent = content.ReadAsStringAsync().GetAwaiter().GetResult();
+                }
             }
-            Debug.WriteLine(stringContent);
+
             return stringContent;
+
+        }
+        public string TcpTest(string mes)
+        {
+            string message = "";
+            try
+            {
+                // Create a TcpClient.
+                // Note, for this client to work you need to have a TcpServer
+                // connected to the same address as specified by the server, port
+                // combination.
+                Int32 port = 23;
+
+                // Prefer a using declaration to ensure the instance is Disposed later.
+                using TcpClient client = new TcpClient(url, port);
+
+                // Translate the passed message into ASCII and store it as a Byte array.
+                Byte[] data = Encoding.ASCII.GetBytes(mes);
+
+                // Get a client stream for reading and writing.
+                NetworkStream stream = client.GetStream();
+
+                // Send the message to the connected TcpServer.
+                stream.Write(data, 0, data.Length);
+
+                message += $"Sent: {mes}\n";
+
+                // Receive the server response.
+
+                // Buffer to store the response bytes.
+                data = new Byte[256];
+
+                // String to store the response ASCII representation.
+                String responseData = String.Empty;
+
+                // Read the first batch of the TcpServer response bytes.
+                Int32 bytes = stream.Read(data, 0, data.Length);
+                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                message += $"Received: {responseData}\n";
+
+                // Explicit close is not necessary since TcpClient.Dispose() will be
+                // called automatically.
+                // stream.Close();
+                // client.Close();
+            }
+            catch (ArgumentNullException e)
+            {
+                message += $"ArgumentNullException: {e} \n";
+            }
+            catch (SocketException e)
+            {
+                message += $"SocketException: {e}";
+            }
+
+            message += $"\n EOM";
+            return message;
         }
     }
 }

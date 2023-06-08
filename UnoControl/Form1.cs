@@ -22,13 +22,14 @@ namespace UnoControl
             if (MmTb.Text.Length == 0) { ResTb.Text = "Set interval length first (mm)!"; }
             else
             {
-                SetValues();
-                ResTb.Text = r.SendData(d.Interval_length,
-                                        d.Interval_time,
-                                        d.Interval_count,
-                                        Convert.ToInt32(d.Direction),
-                                        d.Offset).Result;
-                ResTb.Text = DataToString();
+                ResTb.Text = r.TcpTest(SetValues());
+                //ResTb.Text = r.SendTest(d.Interval_length,
+                //                        d.Interval_time,
+                //                        d.Interval_count,
+                //                        Convert.ToInt32(d.Direction),
+                //                        d.Offset);
+                //ResTb.Text = DataToString();
+                //ResTb.Text = r.SendTest();
                 PPBtn.Enabled = true;
             }
 
@@ -90,7 +91,7 @@ namespace UnoControl
             ResTb.Text = $"Offset: {SledgeBar.Value} mm";
 
         }
-        private void SetValues()
+        private string SetValues()
         {
             if (MinTb.Text.Length == 0) { MinTb.Text = "0"; }
             if (STb.Text.Length == 0) { STb.Text = "0"; }
@@ -98,6 +99,7 @@ namespace UnoControl
             d.Interval_time = Convert.ToInt32(MinTb.Text) * 60;
             d.Interval_time += Convert.ToInt32(STb.Text);
             d.Interval_length = Convert.ToInt32(MmTb.Text);
+            return $"{d.Interval_count}|{d.Interval_length}|{d.Interval_time}|{d.Direction}|{d.Offset}";
         }
 
         private void PPBtn_Click(object sender, EventArgs e)

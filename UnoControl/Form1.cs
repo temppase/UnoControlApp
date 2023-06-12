@@ -7,6 +7,11 @@ namespace UnoControl
         public Form1()
         {
             InitializeComponent();
+            // Test input
+            IntervalTb.Text = "15";
+            MmTb.Text = "14";
+            MinTb.Text = "1";
+            STb.Text = "2";
             SledgeBar.Maximum = 3600; // mm
             StartRight.Select();
             SledgeBar.Value = SledgeBar.Minimum;
@@ -22,14 +27,7 @@ namespace UnoControl
             if (MmTb.Text.Length == 0) { ResTb.Text = "Set interval length first (mm)!"; }
             else
             {
-                ResTb.Text = r.TcpTest(SetValues());
-                //ResTb.Text = r.SendTest(d.Interval_length,
-                //                        d.Interval_time,
-                //                        d.Interval_count,
-                //                        Convert.ToInt32(d.Direction),
-                //                        d.Offset);
-                //ResTb.Text = DataToString();
-                //ResTb.Text = r.SendTest();
+                ResTb.Text = r.TcpSend(SetValues());
                 PPBtn.Enabled = true;
             }
 
@@ -37,32 +35,25 @@ namespace UnoControl
 
         private void StopBtn_Click(object sender, EventArgs e)
         {
-            if (d.Stop) { Reset(); }
-            else { Stop(); }
-            //ResTb.Text = r.SendData(0, 0, 0, 0, 0).Result;
+            r.TcpSend("reset*");
+            Thread.Sleep(1000);
+            r.TcpSend("*");
         }
-        private void Reset()
-        {
-            // Reset condition
-            ResTb.Text = "Reset and back to zero";
-            d.Stop = false;
-            StopBtn.Text = "Stop";
-        }
-        private void Stop()
-        {
-            // Stop condition
-            ResTb.Text = "Stop process";
-            d.Stop = true;
-            StopBtn.Text = "Reset";
-        }
+
         private void StartLeft_CheckedChanged(object sender, EventArgs e)
         {
             SetDirection(true);
+            r.TcpSend("max*");
+            Thread.Sleep(1000);
+            r.TcpSend("*");
         }
 
         private void StartRight_CheckedChanged(object sender, EventArgs e)
         {
             SetDirection(false);
+            r.TcpSend("min*");
+            Thread.Sleep(1000);
+            r.TcpSend("*");
         }
 
         private void SetDirection(bool left)
@@ -89,17 +80,19 @@ namespace UnoControl
         {
             d.Offset = SledgeBar.Value;
             ResTb.Text = $"Offset: {SledgeBar.Value} mm";
+            PPBtn.Enabled = true;
 
         }
         private string SetValues()
         {
             if (MinTb.Text.Length == 0) { MinTb.Text = "0"; }
             if (STb.Text.Length == 0) { STb.Text = "0"; }
+            if (IntervalTb.Text.Length == 0) { IntervalTb.Text = "0"; }
             d.Interval_count = Convert.ToInt32(IntervalTb.Text);
             d.Interval_time = Convert.ToInt32(MinTb.Text) * 60;
             d.Interval_time += Convert.ToInt32(STb.Text);
             d.Interval_length = Convert.ToInt32(MmTb.Text);
-            return $"{d.Interval_count}|{d.Interval_length}|{d.Interval_time}|{d.Direction}|{d.Offset}";
+            return $"{d.Interval_count}|{d.Interval_length}|{d.Interval_time}|{d.Direction}|{d.Offset}*";
         }
 
         private void PPBtn_Click(object sender, EventArgs e)
@@ -116,17 +109,23 @@ namespace UnoControl
         }
         private void Play()
         {
-            ResTb.Text = $"State: Play";
-            PPBtn.Text = "||";
+            ResTb.Text = r.TcpSend("play*");
+            PPBtn.Text = "pause";
             PPBtn.BackColor = Color.DarkCyan;
             d.Play = true;
+            StopBtn.Enabled = false;
+            Thread.Sleep(1000);
+            r.TcpSend("*");
         }
         private void Pause()
         {
-            ResTb.Text = $"State: Pause";
-            PPBtn.Text = ">";
+            ResTb.Text = r.TcpSend("pause*");
+            PPBtn.Text = "play";
             PPBtn.BackColor = Color.Cyan;
             d.Play = false;
+            StopBtn.Enabled = true;
+            Thread.Sleep(1000);
+            r.TcpSend("*");
         }
         public string DataToString()
         {
@@ -137,5 +136,9 @@ namespace UnoControl
                 $"Direction: {d.Direction}";
         }
 
+        private void InfoBtn_Click(object sender, EventArgs e)
+        {
+            ResTb.Text = r.TcpSend("*");
+        }
     }
 }

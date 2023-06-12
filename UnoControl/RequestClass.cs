@@ -49,7 +49,7 @@ namespace UnoControl
             return stringContent;
 
         }
-        public string TcpTest(string mes)
+        public string TcpSend(string mes)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace UnoControl
                 // Send the message to the connected TcpServer.
                 stream.Write(data, 0, data.Length);
 
-                message += $"Sent: {mes}\n";
+                message = $"Sent: {mes}\n";
 
                 // Receive the server response.
 
@@ -95,10 +95,10 @@ namespace UnoControl
             }
             catch (SocketException e)
             {
-                message += $"SocketException: {e}";
+                message += $"SocketException: {e}\n";
             }
 
-            message += $"\n EOM";
+            message += "EOM\n";
             return message;
         }
     }

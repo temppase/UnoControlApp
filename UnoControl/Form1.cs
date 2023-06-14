@@ -7,7 +7,7 @@ namespace UnoControl
         public Form1()
         {
             InitializeComponent();
-            // ****Test input remove****
+            // ****Test input remove for final****
             IntervalTb.Text = "15";
             MmTb.Text = "14";
             MinTb.Text = "1";

@@ -19,36 +19,10 @@ namespace UnoControl
     {
 
         private string url = "192.168.1.177";
-        private string stringContent = "";
         private Int32 port = 23;
         private string message = "";
         public RequestClass() { }
 
-
-        HttpClient client = new HttpClient();
-
-        public string SendTest(int length, int time, int count, int dir, int offset)
-        {
-
-            var formContent = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("legth", length.ToString()),
-                    new KeyValuePair<string, string>("time", time.ToString()),
-                    new KeyValuePair<string, string>("count", count.ToString()),
-                    new KeyValuePair<string, string>("offset", offset.ToString()),
-                    new KeyValuePair<string, string>("direction", dir.ToString())
-            });
-            using (HttpResponseMessage response = client.PostAsync(url, formContent).GetAwaiter().GetResult())
-            {
-                using (HttpContent content = response.Content)
-                {
-                    stringContent = content.ReadAsStringAsync().GetAwaiter().GetResult();
-                }
-            }
-
-            return stringContent;
-
-        }
         public string TcpSend(string mes)
         {
             try

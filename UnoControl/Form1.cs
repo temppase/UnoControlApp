@@ -7,16 +7,16 @@ namespace UnoControl
         public Form1()
         {
             InitializeComponent();
-            // Test input
+            // ****Test input remove****
             IntervalTb.Text = "15";
             MmTb.Text = "14";
             MinTb.Text = "1";
-            STb.Text = "2";
+            STb.Text = "12";
+            // ****Test input end****
             SledgeBar.Maximum = 3600; // mm
             StartRight.Select();
             SledgeBar.Value = SledgeBar.Minimum;
             d.Play = false; // add check!!!
-            d.Stop = false; // does it need check?
             PPBtn.BackColor = Color.Cyan;
             PPBtn.Enabled = false;
             StopBtn.Enabled = false;
@@ -81,6 +81,7 @@ namespace UnoControl
             d.Offset = SledgeBar.Value;
             ResTb.Text = $"Offset: {SledgeBar.Value} mm";
             PPBtn.Enabled = true;
+            r.TcpSend($"0|0|0|0|{d.Offset}*");
 
         }
         private string SetValues()
@@ -127,17 +128,18 @@ namespace UnoControl
             Thread.Sleep(1000);
             r.TcpSend("*");
         }
-        public string DataToString()
-        {
-            return $"Intervals: {d.Interval_count}\n" +
-                $"Lenght: {d.Interval_length} mm\n" +
-                $"Time: {d.Interval_time} s\n" +
-                $"Start: {d.Offset}\n" +
-                $"Direction: {d.Direction}";
-        }
+        //public string DataToString()
+        //{
+        //    return $"Intervals: {d.Interval_count}\n" +
+        //        $"Lenght: {d.Interval_length} mm\n" +
+        //        $"Time: {d.Interval_time} s\n" +
+        //        $"Start: {d.Offset}\n" +
+        //        $"Direction: {d.Direction}";
+        //}
 
         private void InfoBtn_Click(object sender, EventArgs e)
         {
+            // empty request fetch info from arduino
             ResTb.Text = r.TcpSend("*");
         }
     }

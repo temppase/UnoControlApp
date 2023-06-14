@@ -21,7 +21,7 @@ namespace UnoControl
             PPBtn.Enabled = false;
             StopBtn.Enabled = false;
         }
-
+        // Send data to Arduino
         private void SendBtn_Click(object sender, EventArgs e)
         {
             if (MmTb.Text.Length == 0) { ResTb.Text = "Set interval length first (mm)!"; }
@@ -32,30 +32,33 @@ namespace UnoControl
             }
 
         }
-
+        // Reset Arduino process
         private void StopBtn_Click(object sender, EventArgs e)
         {
-            r.TcpSend("reset*");
+            ResTb.Text = r.TcpSend("reset*");
             Thread.Sleep(1000);
-            r.TcpSend("*");
+            // empty request will fetch info from Arduino
+            ResTb.Text = r.TcpSend("*");
         }
-
+        // Set start position maximum value
         private void StartLeft_CheckedChanged(object sender, EventArgs e)
         {
             SetDirection(true);
-            r.TcpSend("max*");
+            ResTb.Text = r.TcpSend("max*");
             Thread.Sleep(1000);
-            r.TcpSend("*");
+            // empty request will fetch info from Arduino
+            ResTb.Text = r.TcpSend("*");
         }
-
+        // Set start position minimum value (default) 
         private void StartRight_CheckedChanged(object sender, EventArgs e)
         {
             SetDirection(false);
-            r.TcpSend("min*");
+            ResTb.Text = r.TcpSend("min*");
             Thread.Sleep(1000);
-            r.TcpSend("*");
+            // empty request will fetch info from Arduino
+            ResTb.Text = r.TcpSend("*");
         }
-
+        // Set direction multiplier max -> min -1, min -> max 1 (default)
         private void SetDirection(bool left)
         {
             if (left)
@@ -75,18 +78,20 @@ namespace UnoControl
                 DirLb.Text = "<--";
             }
         }
-
+        // Set offset to sledge
         private void SledgeBar_Scroll(object sender, EventArgs e)
         {
             d.Offset = SledgeBar.Value;
             ResTb.Text = $"Offset: {SledgeBar.Value} mm";
             PPBtn.Enabled = true;
-            r.TcpSend($"0|0|0|0|{d.Offset}*");
-            Thread.Sleep(500);
-            r.TcpSend("move*");
-            Thread.Sleep(500);
-            r.TcpSend("*");
+            ResTb.Text = r.TcpSend($"0|0|0|0|{d.Offset}*");
+            Thread.Sleep(1000);
+            ResTb.Text = r.TcpSend("move*");
+            Thread.Sleep(1000);
+            // empty request will fetch info from Arduino
+            ResTb.Text = r.TcpSend("*");
         }
+        // Set process start values for arduino
         private string SetValues()
         {
             if (MinTb.Text.Length == 0) { MinTb.Text = "0"; }
@@ -98,7 +103,7 @@ namespace UnoControl
             d.Interval_length = Convert.ToInt32(MmTb.Text);
             return $"{d.Interval_count}|{d.Interval_length}|{d.Interval_time}|{d.Direction}|{d.Offset}*";
         }
-
+        // Play and pause toggle button...
         private void PPBtn_Click(object sender, EventArgs e)
         {
             StopBtn.Enabled = true;
@@ -111,6 +116,7 @@ namespace UnoControl
                 Play();
             }
         }
+        // Send play command...
         private void Play()
         {
             ResTb.Text = r.TcpSend("play*");
@@ -119,8 +125,10 @@ namespace UnoControl
             d.Play = true;
             StopBtn.Enabled = false;
             Thread.Sleep(1000);
-            r.TcpSend("*");
+            // empty request will fetch info from Arduino
+            ResTb.Text = r.TcpSend("*");
         }
+        // Send pause command...
         private void Pause()
         {
             ResTb.Text = r.TcpSend("pause*");
@@ -129,20 +137,12 @@ namespace UnoControl
             d.Play = false;
             StopBtn.Enabled = true;
             Thread.Sleep(1000);
-            r.TcpSend("*");
+            // empty request will fetch info from Arduino
+            ResTb.Text = r.TcpSend("*");
         }
-        //public string DataToString()
-        //{
-        //    return $"Intervals: {d.Interval_count}\n" +
-        //        $"Lenght: {d.Interval_length} mm\n" +
-        //        $"Time: {d.Interval_time} s\n" +
-        //        $"Start: {d.Offset}\n" +
-        //        $"Direction: {d.Direction}";
-        //}
-
         private void InfoBtn_Click(object sender, EventArgs e)
         {
-            // empty request fetch info from arduino
+            // empty request will fetch info from Arduino
             ResTb.Text = r.TcpSend("*");
         }
     }

@@ -82,7 +82,10 @@ namespace UnoControl
             ResTb.Text = $"Offset: {SledgeBar.Value} mm";
             PPBtn.Enabled = true;
             r.TcpSend($"0|0|0|0|{d.Offset}*");
-
+            Thread.Sleep(500);
+            r.TcpSend("move*");
+            Thread.Sleep(500);
+            r.TcpSend("*");
         }
         private string SetValues()
         {
